@@ -96,7 +96,7 @@ from jsonpath_nz import parse_dict
 dict_data = {
     "store": {"book": [{"author": "Yakub Mohammad"}, {"category": "Fiction"}]},
     "channel": "online",
-    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210"
+    "loanApplication": {'borrower': [{'firstName': 'John', 'lastName': 'Doe', 'contact': '9876543210'}]}
 }
 
 extend = {
