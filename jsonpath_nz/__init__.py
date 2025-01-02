@@ -19,6 +19,6 @@ __author__ = "Yakub Mohammad"
 __license__ = "MIT"
 
 __all__ = [
-    'parse_dict',
-    'parse_jsonpath',
+    "parse_dict",
+    "parse_jsonpath",
 ]
