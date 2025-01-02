@@ -6,7 +6,7 @@ A Python library for bidirectional conversion between JSON objects and JSONPath 
 Handles complex filter conditions, nested arrays, and maintains data structure integrity.
 
 Author: Yakub Mohammad
-Version: 0.1.0
+Version: 0.1.1
 License: MIT
 Copyright (c) 2024 Yakub Mohammad / AR USA LLC
 
@@ -29,6 +29,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Yakub Mohammad Principal Engineer - AR USA LLC"
 __license__ = "MIT"

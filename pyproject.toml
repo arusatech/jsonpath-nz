@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "jsonpath-nz"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python library for bidirectional conversion between JSON objects and JSONPath expressions"
-authors = ["Yakub Mohammad <yakub@arusatech.com>"]
+authors = ["Yakub Mohammad <yakub@arusatech.com> <arusatechnology@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/arusatech/jsonpath-nz"
