@@ -115,15 +115,15 @@ def parse_jsonpath(manifest, extend=None):
                     if "==" in strValues[1]:
                         tDict[strValues[0]] = " ".join(strValues[2:])
                         # Its exception example "Texas A(6)" : Anything that has ( or ) in assigned value
-                        TexasValueList = tDict[strValues[0]].split(" ")
-                        if "Texas" in TexasValueList[0]:
-                            TexasValue = (
-                                " ".join(TexasValueList[:-1])
+                        ARValueList = tDict[strValues[0]].split(" ")
+                        if ARValueList[0]:
+                            ARValue = (
+                                " ".join(ARValueList[:-1])
                                 + "("
-                                + TexasValueList[-1]
+                                + ARValueList[-1]
                                 + ")"
                             )
-                            tDict[strValues[0]] = TexasValue
+                            tDict[strValues[0]] = ARValue
 
                         tDict.update(process_subList(v))
             else:
