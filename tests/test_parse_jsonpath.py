@@ -1,36 +1,22 @@
-import json
 import sys
 import os
-
-def ar_print(data, load=False, marshall=True, indent=2):
-    '''To print the data in a readable format'''
-    def _stringify_val(data):
-        if isinstance(data, dict):
-            return {k: _stringify_val(v) for k, v in data.items()}
-        elif isinstance(data, list):
-            return [_stringify_val(v) for v in data]
-        elif isinstance(data, (str, int, float)):
-            return data
-        return str(data)
-
-    _data = _stringify_val(data) if marshall else data
-    try:
-        _d = (
-            json.dumps(json.loads(_data), indent=indent) if load else
-            json.dumps(_data, indent=indent)
-        )
-    except:
-        _d = _data
-
-    print(_d)
-    
-    
+  
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
 
 
 import jsonpath_nz as jnz
+jsonpath_data = {
+    "$.store.book[1].author": "Yakub Mohammad",
+    "$.store.local": "False",
+    "$.channel": "online",
+    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210",
+    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211"
+}
+EXT_1 = {
+    "borrower": ["firstName", "lastName"]
+}
 
 manifest = {
     "$.store.book[2].price" :"100",   
@@ -51,8 +37,10 @@ manifest = {
     
 }
 
-EXT = {"gfe2010Fees": ["gfe2010FeeParentType", "gfe2010FeeType"], 'fields': ['fieldName']}
-payload = jnz.parse_jsonpath(manifest, extend=EXT)
+EXT_2 = {"gfe2010Fees": ["gfe2010FeeParentType", "gfe2010FeeType"], 'fields': ['fieldName']}
+payload = jnz.parse_jsonpath(manifest, extend=EXT_2)
+jnz.jprint(payload)
 
-ar_print(payload)
+payload = jnz.parse_jsonpath(jsonpath_data, extend=EXT_1)
+jnz.jprint(payload)
 
