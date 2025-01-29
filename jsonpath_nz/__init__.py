@@ -16,7 +16,7 @@ from .parse_jsonpath import parse_jsonpath
 from .log import log
 from .jprint import jprint
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __author__ = "Yakub Mohammad"
 __license__ = "MIT"
 

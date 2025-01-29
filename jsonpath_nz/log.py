@@ -93,21 +93,20 @@ class LoggerConfig:
                     exc_value = exc_info
                 else:
                     exc_type, exc_value, tb = exc_info
-
-                if tb:
-                    while tb.tb_next:
-                        tb = tb.tb_next
-                    
-                    frame = tb.tb_frame
-                    filename = frame.f_code.co_filename
-                    function = frame.f_code.co_name
-                    line_no = tb.tb_lineno
-                    
-                    error_msg = (f"======= TRACEBACK =======\nTRACEBACK: << {function} >> [{filename}:{line_no}]\n"
-                            f"{str(exc_type.__name__).upper()}: {str(exc_value)} ")
-                    self._log_with_capture(logging.ERROR, error_msg, capture=True)
-                else:
-                    self._log_with_capture(logging.ERROR, f"Exception: {exc_type.__name__}: {str(exc_value)}", capture=True)
+                
+                import traceback
+                tb_list = traceback.extract_tb(tb)
+                
+                error_msg = "======= TRACEBACK =======\n"
+                error_msg += "Traceback (most recent call last):\n"
+                
+                for filename, line_no, function, text in tb_list:
+                    error_msg += f"  File \"{filename}\", line {line_no}, in {function}\n"
+                    if text:
+                        error_msg += f"    {text}\n"
+                
+                error_msg += f"{exc_type.__name__}: {str(exc_value)}"
+                self._log_with_capture(logging.ERROR, error_msg, capture=True)
                     
             except Exception as e:
                 self.logger.error(f"Failed to log traceback: {str(e)}")
