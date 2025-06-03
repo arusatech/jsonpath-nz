@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "jsonpath-nz"
-version = "0.1.2"
+version = "0.1.4"
 description = "A Python library for bidirectional conversion between JSON objects and JSONPath expressions"
-authors = ["Yakub Mohammad <yakub@arusatech.com> <arusatechnology@gmail.com>"]
+authors = [
+    "Yakub Mohammad <yakub@arusatech.com> <arusatechnology@gmail.com>",
+    "Rishaad <rishaad@arusatech.com>"
+]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/arusatech/jsonpath-nz"
@@ -20,6 +23,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 packages = [
@@ -27,7 +32,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"
+python = ">=3.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"

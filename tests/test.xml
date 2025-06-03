@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:OrderCreateRQ xmlns:ns0="http://www.iata.org/IATA/EDIST/2021.2"
+
+                   xmlns:ns1="http://www.airline.com/custom/ns">
+
+    <!-- Party Section -->
+    <ns0:Party>
+        <ns0:Sender>
+            <ns1:AgencyCode>AGENCY123</ns1:AgencyCode>
+            <ns0:AgentUser>
+                <ns0:UserID>AGENT456</ns0:UserID>
+            </ns0:AgentUser>
+        </ns0:Sender>
+    </ns0:Party>
+
+    <!-- Data List Section -->
+    <ns0:DataList>
+
+        <!-- Passenger Info -->
+        <ns0:Passenger>
+            <ns0:PassengerID>PAX1</ns0:PassengerID>
+            <ns0:Name>
+                <ns0:GivenName>Jane</ns0:GivenName>
+                <ns0:Surname>Doe</ns0:Surname>
+            </ns0:Name>
+            <ns1:CustomPassengerInfo>
+                <ns1:LoyaltyLevel>VIP</ns1:LoyaltyLevel>
+                <ns1:SpecialRequests>
+                    <ns1:MealPreference>Vegetarian</ns1:MealPreference>
+                    <ns1:SeatPreference>Aisle</ns1:SeatPreference>
+                </ns1:SpecialRequests>
+            </ns1:CustomPassengerInfo>
+        </ns0:Passenger>
+
+        <!-- Flight Offer -->
+        <ns0:FlightOffer>
+            <ns0:OfferID>OFFER789</ns0:OfferID>
+            <ns0:Owner>AB</ns0:Owner>
+            <ns0:TotalPrice>
+                <ns0:SimpleCurrencyPrice currency="USD">399.99</ns0:SimpleCurrencyPrice>
+            </ns0:TotalPrice>
+        </ns0:FlightOffer>
+
+    </ns0:DataList>
+
+    <!-- Order Items -->
+    <ns0:OrderItem>
+        <ns0:OrderItemID>ITEM1</ns0:OrderItemID>
+        <ns0:Service>
+            <ns0:BaggageAllowance>
+                <ns0:ApplicableSegment>SEG1</ns0:ApplicableSegment>
+                <ns0:Weight>20</ns0:Weight>
+                <ns0:UnitOfMeasure>KG</ns0:UnitOfMeasure>
+            </ns0:BaggageAllowance>
+        </ns0:Service>
+    </ns0:OrderItem>
+
+</ns0:OrderCreateRQ>

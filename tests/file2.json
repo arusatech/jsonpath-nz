@@ -1,0 +1,7 @@
+{
+    "name": "John",
+    "details": {
+        "location": "NYC",
+        "skills": ["JavaScript", "SQL"]
+    }
+}
