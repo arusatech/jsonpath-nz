@@ -1,44 +1,29 @@
 # JSONPath-NZ (NextZen)
 
-A Python library for bidirectional conversion between JSON objects and JSONPath expressions, with support for complex filter conditions and array handling.
-- `Author` : Yakub Mohammad (yakub@arusatech.com , arusatechnology@gmail.com) | AR USA LLC
+A comprehensive Python library for bidirectional conversion between JSON objects and JSONPath expressions, with advanced features for complex data manipulation, XML processing, JSON merging, and enhanced logging capabilities.
+
+- `Author` : Yakub Mohammad (yakub@arusatech.com , arusatechnology@gmail.com) , Rishaad (rishaad@arusatech.com) | AR USA LLC
 
 ## Features
 
-### Two-way conversion between JSON and JSONPath expressions:
-- Convert JSONPath expressions to JSON objects (`parse_jsonpath`)
-- Convert JSON objects to JSONPath expressions (`parse_dict`)
-- Support for complex filter conditions using `extend` parameter
-- Handle nested objects and arrays
-- Support array indexing and empty objects
-- Maintain data structure integrity
+### Core JSONPath Operations
+- **Bidirectional conversion** between JSON objects and JSONPath expressions
+- **Advanced filter conditions** using `extend` parameter for intelligent array handling
+- **Complex nested structures** support with proper data integrity
+- **Array indexing and filtering** with conditional expressions
+- **Error handling and validation** for robust JSONPath processing
 
-### JSON Pretty Printing
-- The package includes a convenient JSON pretty printing utility `jprint` that handles various data formats and provides flexible output options.
+### JSON Utilities
+- **Pretty printing** with flexible formatting options (`jprint`)
+- **JSON merging** with deep merge capabilities and list handling strategies
+- **XML to JSON conversion** with namespace preservation options
 
-#### Parameters
-
-- `data`: The data to print (dict, list, string, or any object)
-- `load`: Set to `True` when input is a JSON string that needs parsing
-- `marshall`: Set to `True` to convert non-JSON-serializable objects to strings
-- `indent`: Number of spaces for indentation (default: 2)
-
-### Enhanced Python Logger
-- A flexible basic logging utility `log` that uses Python's built-in logging functionality with additional features like file capture and detailed tracebacks.
-- Console and file logging support
-- Capture specific log messages to file
-- Detailed traceback information
-- Consistent formatting across console and file outputs
-- File name and line number tracking
-- Dynamic log file configuration (example : `log.config(log_file_name)`)
-
-#### Log Levels
-- `log.debug(msg)` - Detailed information for debugging
-- `log.info(msg)` - General information about program execution
-- `log.warning(msg)` - Warning messages for potentially problematic situations
-- `log.error(msg)` - Error messages for serious problems
-- `log.critical(msg)` - Critical messages for fatal errors
-- `log.traceback(e)` - Detailed exception information can be used in try/except blocks
+### Enhanced Logging System
+- **Multi-level logging** with console and file output
+- **Automatic caller information** (file name and line number)
+- **Selective file capture** for important messages
+- **Detailed traceback logging** for exception handling
+- **Dynamic configuration** for runtime log file management
 
 ## Installation
 
@@ -46,52 +31,32 @@ A Python library for bidirectional conversion between JSON objects and JSONPath 
 pip install jsonpath-nz
 ```
 
-## Usage
-
-### Converting JSONPath to Dictionary (`parse_jsonpath(<Dict of JSONPath>,extend=<extend filter dictionary>)`)
-### Converting Dictionary to JSONPath (`parse_dict(<Dictionary>,extend=<extend filter dictionary>)`)
-
-- See the [tests/test_parse_jsonpath.py and tests/test_parse_dict.py] files for examples.
-
-- Define extend parameter for filter conditions
-
-# JSONPath Extend Filter given as parameter 
-
-The extend filter in JSONPath allows complex filtering of arrays based on multiple conditions. It uses the syntax:
-
-[?(@.field1 == 'value1' && @.field2 == 'value2')]
-
-Example:
-`$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact`
-
-This filters array elements where:
-- firstName equals 'John' AND
-- lastName equals 'wright'
-
-Key features:
-- Uses @ to reference current element
-- Supports multiple conditions with && (AND)
-- Can access nested properties
-- Returns matching elements only
-
 ## API Reference
 
-### parse_jsonpath(manifest, extend=None)
+### Core Functions
 
-Converts JSONPath expressions to a dictionary structure.
+#### `parse_jsonpath(manifest, extend=None)`
 
-Parameters:
-- `manifest` (dict): Dictionary with JSONPath expressions as keys and values
-- `extend` (dict, optional): Dictionary specifying filter conditions for arrays
+Convert JSONPath expressions to a dictionary structure with advanced filtering support.
 
-Returns:
-- dict: Processed dictionary structure
+**Parameters:**
+- `manifest` (dict): Dictionary with JSONPath expressions as keys and target values
+- `extend` (dict, optional): Configuration for advanced list merging behavior
 
-Example:
+**Returns:**
+- dict: Processed dictionary structure or error dictionary
 
+**Features:**
+- Validates JSONPath syntax and bracket balancing
+- Supports complex nested structures and arrays
+- Handles filter conditions with extend parameter
+- Provides detailed error reporting for invalid expressions
+
+**Example:**
 ```python
 from jsonpath_nz import parse_jsonpath, jprint
-JSONPath expressions
+
+# JSONPath expressions with filter conditions
 jsonpath_data = {
     "$.store.book[1].author": "Yakub Mohammad",
     "$.store.local": "False",
@@ -99,14 +64,17 @@ jsonpath_data = {
     "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210",
     "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211"
 }
+
 extend = {
     "borrower": ["firstName", "lastName"]
 }
+
 result = parse_jsonpath(jsonpath_data, extend=extend)
 jprint(result)
 ```
-Output:
-```
+
+**Output:**
+```json
 {
   "store": {
     "book": [
@@ -135,102 +103,328 @@ Output:
 }
 ```
 
-### parse_dict(data, parent_path='$', paths=None, extend=None)
+#### `parse_dict(data, parent_path="$", paths=None, extend=None)`
 
-Converts a dictionary to JSONPath expressions.
+Convert a dictionary to JSONPath expressions with support for both array indices and filter conditions.
 
-Parameters:
-- `data` (dict): Input dictionary to convert
-- `parent_path` (str, optional): Base JSONPath. Defaults to '$'
-- `paths` (dict, optional): Dictionary to store results
-- `extend` (dict, optional): Dictionary specifying filter fields for arrays
+**Parameters:**
+- `data` (dict): Input dictionary to convert to JSONPath expressions
+- `parent_path` (str, optional): Base JSONPath prefix (defaults to "$")
+- `paths` (dict, optional): Dictionary to accumulate results (created if None)
+- `extend` (dict, optional): Configuration for filter-based array handling
 
-Returns:
-- dict: Dictionary with JSONPath expressions as keys and values
+**Returns:**
+- dict: Dictionary mapping JSONPath expressions to their values
 
-Example:
+**JSONPath Expression Types:**
+- Simple paths: `$.user.name` for nested values
+- Array index paths: `$.items[0].price` for array elements
+- Filter paths: `$.users[?(@.id == '123' && @.active == 'true')].email`
 
+**Example:**
 ```python
 from jsonpath_nz import parse_dict, jprint
 
-# Dictionary to convert
+# Complex nested dictionary
 dict_data = {
     "store": {"book": [{"author": "Yakub Mohammad"}, {"category": "Fiction"}]},
     "channel": "online",
-    "loanApplication": {'borrower': [
-        {'firstName': 'John', 'lastName': 'Doe', 'contact': '9876543210'},
-        {'firstName': 'John', 'lastName': 'wright', 'contact': '9876543211'}]}
+    "loanApplication": {
+        'borrower': [
+            {'firstName': 'John', 'lastName': 'Doe', 'contact': '9876543210'},
+            {'firstName': 'John', 'lastName': 'wright', 'contact': '9876543211'}
+        ]
+    }
 }
 
 extend = {
     "borrower": ["firstName", "lastName"]
 }
 
-result = parse_dict(dict_data, extend=None)
+result = parse_dict(dict_data, extend=extend)
 jprint(result)
 ```
 
-Output:
-```bash
+**Output:**
+```json
 {
-  "$.store.book[1].author": "Yakub Mohammad",
-  "$.store.local": "False",
+  "$.store.book[0].author": "Yakub Mohammad",
+  "$.store.book[1].category": "Fiction",
   "$.channel": "online",
   "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210",
   "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211"
 }
 ```
 
-## Error Handling
+#### `merge_json(dict1, dict2, extend=False)`
 
-Both functions include error handling for:
-- Invalid JSONPath syntax
-- Unbalanced brackets or quotes
-- Missing required fields
-- Invalid filter conditions
+Merge two JSON files or dictionaries with support for nested structures and intelligent list handling.
 
-## JSON Pretty Printing
+**Parameters:**
+- `dict1` (Union[Dict, str]): First dictionary or path to JSON file
+- `dict2` (Union[Dict, str]): Second dictionary or path to JSON file (takes precedence)
+- `extend` (bool, optional): Controls list merging behavior (defaults to False)
 
-- In the above example of parse_jsonpath and parse_dict functions, the output is printed using the `jprint` function.
+**Returns:**
+- dict: New merged dictionary without modifying originals
 
-## Logging
+**List Merging Modes:**
+- `extend=False`: Element-wise merging with remaining elements appended
+- `extend=True`: Key-based matching for dictionary items in lists
 
-- The `log` function is used to log messages to the console and file.
-- See the [tests/test_log.py] file for examples.
+**Example:**
+```python
+from jsonpath_nz import merge_json, jprint
 
-Example:
+# Basic merging
+dict1 = {
+    "user": {"name": "John", "age": 25},
+    "settings": {"theme": "dark"}
+}
 
+dict2 = {
+    "user": {"email": "john@example.com", "age": 26},
+    "settings": {"language": "en"}
+}
+
+result = merge_json(dict1, dict2)
+jprint(result)
+```
+
+**Output:**
+```json
+{
+  "user": {
+    "name": "John",
+    "age": 26,
+    "email": "john@example.com"
+  },
+  "settings": {
+    "theme": "dark",
+    "language": "en"
+  }
+}
+```
+
+#### `xml_to_json(xml_data, namespace=True)`
+
+Convert XML data to JSON format with comprehensive namespace handling and flexible input support.
+
+**Parameters:**
+- `xml_data` (str or file-like): XML content, file path, or file-like object
+- `namespace` (bool, optional): Preserve namespaces with prefixes (defaults to True)
+
+**Returns:**
+- str: Pretty-printed JSON string with UTF-8 support
+
+**Input Types Supported:**
+- XML strings (content starting with '<?xml' or '<')
+- File paths to XML files
+- File-like objects with read() method
+
+**Namespace Handling:**
+- `namespace=True`: Preserves namespaces as prefixes (e.g., "ns0:elementName")
+- `namespace=False`: Strips namespaces, keeping only local names
+
+**Example:**
+```python
+from jsonpath_nz import xml_to_json
+
+xml_string = '''<?xml version="1.0"?>
+<catalog xmlns:lib="http://library.org">
+    <lib:book id="1">
+        <title>XML Guide</title>
+        <author>John Doe</author>
+        <price>29.99</price>
+    </lib:book>
+</catalog>'''
+
+# With namespace preservation
+result_with_ns = xml_to_json(xml_string, namespace=True)
+print("With namespaces:")
+print(result_with_ns)
+
+# Without namespaces
+result_without_ns = xml_to_json(xml_string, namespace=False)
+print("\nWithout namespaces:")
+print(result_without_ns)
+```
+
+### Utility Functions
+
+#### `jprint(data, load=False, marshall=True, indent=2)`
+
+Pretty-print data in JSON format with flexible input handling and formatting options.
+
+**Parameters:**
+- `data` (Any): Data to print (dict, list, string, or any object)
+- `load` (bool, optional): Parse string input as JSON (defaults to False)
+- `marshall` (bool, optional): Convert non-serializable objects to strings (defaults to True)
+- `indent` (int, optional): JSON indentation spaces (defaults to 2)
+
+**Features:**
+- Handles various input types automatically
+- Graceful fallback for serialization errors
+- Custom object conversion with marshalling
+- Consistent JSON formatting
+
+**Example:**
+```python
+from jsonpath_nz import jprint
+from datetime import datetime
+
+# Pretty print with custom objects
+data = {
+    "timestamp": datetime.now(),
+    "items": [1, 2, 3],
+    "user": {"name": "John", "active": True}
+}
+
+jprint(data, indent=4)  # Custom indentation
+```
+
+### Enhanced Logging System
+
+The library includes a sophisticated logging system with automatic caller information and selective file capture.
+
+#### `LoggerConfig` Class
+
+Enhanced logging configuration with file capture and caller information.
+
+**Features:**
+- Automatic file name and line number inclusion
+- Conditional file capture with capture parameter
+- Enhanced traceback logging
+- Runtime configuration updates
+
+#### Logging Methods
+
+- `log.debug(msg, *args, **kwargs)` - Detailed debugging information
+- `log.info(msg, *args, **kwargs)` - General program information
+- `log.warning(msg, *args, **kwargs)` - Warning messages
+- `log.error(msg, *args, **kwargs)` - Error messages
+- `log.critical(msg, *args, **kwargs)` - Critical system errors
+- `log.traceback(exc_info=None)` - Detailed exception logging
+- `log.config(log_file_path=None)` - Runtime configuration
+
+**Capture Options:**
+- Keyword argument: `log.info("Message", capture=True)`
+- Positional flag: `log.error("Error occurred", 1)`
+
+**Example:**
 ```python
 from jsonpath_nz import log
-log.config("app.log") # this is optional(default log capture to <temp directory>/arlog_<timestamp>.log)
-log.info("This is a test message")
-log.error("This is an error message")
-log.critical("This is a critical message", capture=True) # this will capture to file
-log.warning("This is a warning message" , 1) # this will capture to file
-log.debug("This is a debug message")
-def test_traceback():   
-    try:
-        #divide by zero
-        a = 1/0
-        raise Exception("This is a test exception")
-    except Exception as e:
-        log.traceback(e)
-        log.error("This is an trace back message--",1)
-test_traceback()
+
+# Configure log file (optional)
+log.config("application.log")
+
+# Basic logging (console only)
+log.info("Application started")
+log.debug("Processing data")
+
+# Logging with file capture
+log.warning("Configuration issue detected", capture=True)
+log.error("Database connection failed", 1)  # Using positional flag
+
+# Exception handling with traceback
+try:
+    result = 1 / 0
+except Exception as e:
+    log.traceback(e)  # Automatically captures to file
+    log.error("Division by zero error occurred", capture=True)
 ```
 
-Output:
+**Output Format:**
 ```
-2025-01-05 00:21:31,881 - INFO      [test_log.py:12] This is a test message
-2025-01-05 00:21:31,881 - ERROR     [test_log.py:13] This is an error message
-2025-01-05 00:21:31,881 - CRITICAL  [test_log.py:14] This is a critical message
-2025-01-05 00:21:31,882 - WARNING   [test_log.py:15] This is a warning message
-2025-01-05 00:21:31,882 - DEBUG     [test_log.py:16] This is a debug message
-2025-01-05 00:21:31,883 - ERROR     [test_log.py:25] ======= TRACEBACK =======
-TRACEBACK: << test_traceback >> [C:\Users\arusa\tools\GIT\jsonpath-nz\tests\test_log.py:22]
-ZERODIVISIONERROR: division by zero
-2025-01-05 00:21:31,883 - ERROR     [test_log.py:26] This is an trace back message--
+2025-01-05 10:30:45,123 - INFO     [main.py:15] Application started
+2025-01-05 10:30:45,124 - DEBUG    [main.py:16] Processing data
+2025-01-05 10:30:45,125 - WARNING  [main.py:19] Configuration issue detected
+2025-01-05 10:30:45,126 - ERROR    [main.py:20] Database connection failed
+2025-01-05 10:30:45,127 - ERROR    [main.py:26] ======= TRACEBACK =======
+Traceback (most recent call last):
+  File "main.py", line 23, in <module>
+    result = 1 / 0
+ZeroDivisionError: division by zero
 ```
+
+## Advanced Features
+
+### JSONPath Extend Filter Configuration
+
+The extend parameter enables sophisticated filtering and merging strategies for array elements:
+
+```python
+extend_config = {
+    "array_field_name": ["filter_field1", "filter_field2"],
+    "users": ["id", "email"],
+    "products": ["sku", "category"]
+}
+```
+
+**Filter Behavior:**
+- Fields listed in extend become filter conditions
+- Remaining fields become target paths
+- Multiple filter fields combined with AND logic
+- Creates JSONPath expressions like: `$.users[?(@.id == 'value' && @.email == 'user@example.com')].name`
+
+### Error Handling
+
+All functions include comprehensive error handling:
+
+- **parse_jsonpath**: Returns `{"error": "description"}` for invalid JSONPath expressions
+- **parse_dict**: Graceful handling of mixed data types and invalid structures
+- **merge_json**: File access and JSON parsing error handling
+- **xml_to_json**: XML parsing and conversion error handling with detailed messages
+- **Logging**: Built-in exception handling with fallback behavior
+
+### Performance Considerations
+
+- **Memory Usage**: Functions process data entirely in memory
+- **Large Files**: Consider memory constraints for very large JSON/XML files
+- **Namespace Processing**: XML namespace extraction may parse files twice
+- **Deep Nesting**: Recursive processing handles deeply nested structures efficiently
+
+## Best Practices
+
+1. **JSONPath Validation**: Always check return values for error dictionaries
+2. **Extend Configuration**: Use extend parameter for intelligent array handling
+3. **Namespace Handling**: Choose appropriate namespace mode for XML conversion
+4. **Logging Capture**: Use selective file capture for important messages only
+5. **Error Handling**: Implement proper error checking in production code
+
+## Testing
+
+The library includes comprehensive test suites:
+
+- `tests/test_parse_jsonpath.py` - JSONPath to dictionary conversion tests
+- `tests/test_parse_dict.py` - Dictionary to JSONPath conversion tests
+- `tests/test_merge_json.py` - JSON merging functionality tests
+- `tests/test_xml_to_json.py` - XML to JSON conversion tests
+- `tests/test_log.py` - Enhanced logging system tests
+- `tests/test_jprint.py` - Pretty printing utility tests
+
+## Contributing
+
+Contributions are welcome! Please ensure:
+
+1. All new features include comprehensive docstrings
+2. Test coverage for new functionality
+3. Examples in documentation
+4. Error handling for edge cases
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please contact:
+- Email: yakub@arusatech.com, arusatechnology@gmail.com
+- Company: AR USA LLC
+
+---
+
+*JSONPath-NZ (NextZen) - Powerful JSON manipulation with intelligent path handling*
 
 
 

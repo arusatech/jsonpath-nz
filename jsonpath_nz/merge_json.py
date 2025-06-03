@@ -3,15 +3,72 @@ import json
 
 def merge_json(dict1: Union[Dict, str], dict2: Union[Dict, str], extend: bool = False) -> Dict[str, Any]:
     """
-    Merge two JSON files or dictionaries that may contain nested dictionaries or lists
+    Merge two JSON files or dictionaries with support for nested structures and list handling.
+    
+    This function provides deep merging capabilities for JSON data structures, including
+    nested dictionaries and lists. It can handle both dictionary objects and file paths
+    to JSON files as input.
     
     Args:
-        dict1: First dictionary or path to JSON file
-        dict2: Second dictionary or path to JSON file
-        extend: Boolean flag to determine if lists should be extended
-        
+        dict1 (Union[Dict, str]): First dictionary to merge, or path to a JSON file.
+            If a string is provided, it should be a valid file path to a JSON file.
+        dict2 (Union[Dict, str]): Second dictionary to merge, or path to a JSON file.
+            If a string is provided, it should be a valid file path to a JSON file.
+            Values from dict2 will override values from dict1 for matching keys.
+        extend (bool, optional): Controls how lists are merged. Defaults to False.
+            - If False: Lists are merged element-wise, with remaining elements from
+              the second list appended to the result.
+            - If True: Lists are extended by matching dictionary keys within list items,
+              and unique non-dictionary items are appended.
+    
     Returns:
-        dict: Merged dictionary
+        Dict[str, Any]: A new dictionary containing the merged result. The original
+        dictionaries are not modified.
+    
+    Raises:
+        FileNotFoundError: If a provided file path does not exist.
+        json.JSONDecodeError: If a file contains invalid JSON.
+        TypeError: If the input types are not supported.
+    
+    Examples:
+        Basic dictionary merging:
+        
+        >>> dict1 = {"a": 1, "b": {"c": 2}}
+        >>> dict2 = {"b": {"d": 3}, "e": 4}
+        >>> result = merge_json(dict1, dict2)
+        >>> print(result)
+        {"a": 1, "b": {"c": 2, "d": 3}, "e": 4}
+        
+        Merging from JSON files:
+        
+        >>> result = merge_json("config1.json", "config2.json")
+        
+        List merging without extension:
+        
+        >>> dict1 = {"items": [{"id": 1}, {"id": 2}]}
+        >>> dict2 = {"items": [{"name": "first"}, {"name": "second"}, {"id": 3}]}
+        >>> result = merge_json(dict1, dict2, extend=False)
+        >>> print(result["items"])
+        [{"id": 1, "name": "first"}, {"id": 2, "name": "second"}, {"id": 3}]
+        
+        List merging with extension:
+        
+        >>> dict1 = {"users": [{"id": 1, "name": "John"}]}
+        >>> dict2 = {"users": [{"id": 1, "email": "john@email.com"}, {"id": 2, "name": "Jane"}]}
+        >>> result = merge_json(dict1, dict2, extend=True)
+        >>> print(result["users"])
+        [{"id": 1, "name": "John", "email": "john@email.com"}, {"id": 2, "name": "Jane"}]
+    
+    Note:
+        - The merge operation creates a new dictionary and does not modify the input dictionaries.
+        - For conflicting scalar values, dict2 values take precedence over dict1 values.
+        - When extend=True, list items are considered to match if they are both dictionaries
+          and share at least one common key.
+        - The function performs deep copying to avoid reference issues in nested structures.
+    
+    See Also:
+        - json.load: For loading JSON files
+        - dict.update: For simple dictionary updates without deep merging
     """
     
     def merge_lists(aList, bList, extend=False):
