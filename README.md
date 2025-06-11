@@ -250,6 +250,69 @@ print("\nWithout namespaces:")
 print(result_without_ns)
 ```
 
+#### `flatten_dict(data, parent_path="$", paths=None, extend=None, preserve_dict_values=False)`
+
+Convert a dictionary to JSONPath expressions with option to preserve dictionary objects.
+
+**Parameters:**
+- `data` (dict): Input dictionary to convert to JSONPath expressions
+- `parent_path` (str, optional): Base JSONPath prefix (defaults to "$")
+- `paths` (dict, optional): Dictionary to accumulate results (created if None)
+- `extend` (dict, optional): Configuration for filter-based array handling
+- `preserve_dict_values` (bool, optional): If True, preserves dictionary objects as values rather than recursively expanding them (defaults to False)
+
+**Returns:**
+- dict: Dictionary mapping JSONPath expressions to their values
+
+**Dictionary Preservation Behavior:**
+- `preserve_dict_values=False` (default): Recursively expands nested dictionaries
+- `preserve_dict_values=True`: Preserves dictionary objects as values at their path
+
+**Example:**
+```python
+from jsonpath_nz import flatten_dict, jprint
+
+# Dictionary with nested structures
+data = {
+    "user": {
+        "profile": {"name": "John", "age": 30},
+        "settings": {"theme": "dark", "notifications": True}
+    },
+    "status": "active"
+}
+
+# Default recursive expansion
+result = flatten_dict(data)
+jprint(result)
+```
+
+**Output:**
+```json
+{
+  "$.user.profile.name": "John",
+  "$.user.profile.age": 30,
+  "$.user.settings.theme": "dark",
+  "$.user.settings.notifications": true,
+  "$.status": "active"
+}
+```
+
+**With preserve_dict_values=True:**
+```python
+# Preserve dictionary objects
+result = flatten_dict(data, preserve_dict_values=True)
+jprint(result)
+```
+
+**Output:**
+```json
+{
+  "$.user.profile": {"name": "John", "age": 30},
+  "$.user.settings": {"theme": "dark", "notifications": true},
+  "$.status": "active"
+}
+```
+
 ### Utility Functions
 
 #### `jprint(data, load=False, marshall=True, indent=2)`

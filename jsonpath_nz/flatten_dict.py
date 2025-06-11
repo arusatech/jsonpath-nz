@@ -1,4 +1,4 @@
-def flatten_dict(data, parent_path="$", paths=None, extend=None, flatten=False):
+def flatten_dict(data, parent_path="$", paths=None, extend=None, preserve_dict_values=False):
     """
     Convert a dictionary to JSONPath expressions, handling both array indices and filter conditions.
     
@@ -22,7 +22,7 @@ def flatten_dict(data, parent_path="$", paths=None, extend=None, flatten=False):
             When specified, creates filter-based JSONPath expressions instead
             of index-based paths for matching arrays.
             Format: {"array_field": ["filter_field1", "filter_field2"]}
-        flatten (bool, optional): If True, preserve dictionary objects as
+        preserve_dict_values (bool, optional): If True, preserve dictionary objects as
             values rather than recursively expanding them. Defaults to False.
     
     Returns:
@@ -181,28 +181,28 @@ def flatten_dict(data, parent_path="$", paths=None, extend=None, flatten=False):
             elif isinstance(value, list):
                 for idx, item in enumerate(value):
                     if isinstance(item, dict):
-                        if flatten:
+                        if preserve_dict_values:
                             # Store the entire dictionary as a value at the array index
                             array_path = f"{current_path}[{idx}]"
                             paths[array_path] = item
                         else:
                             for k, v in item.items():
                                 array_path = f"{current_path}[{idx}].{k}"
-                                if isinstance(v, dict) and flatten:
+                                if isinstance(v, dict) and preserve_dict_values:
                                     paths[array_path] = v
                                 else:
                                     if isinstance(v, dict):
-                                        flatten_dict(v, array_path, paths, extend, flatten)
+                                        flatten_dict(v, array_path, paths, extend, preserve_dict_values)
                                     else:
                                         paths[array_path] = v
 
             # Handle nested dictionaries
             elif isinstance(value, dict):
-                if flatten:
+                if preserve_dict_values:
                     # Store the entire dictionary as a value
                     paths[current_path] = value
                 else:
-                    flatten_dict(value, current_path, paths, extend, flatten)
+                    flatten_dict(value, current_path, paths, extend, preserve_dict_values)
 
             # Handle simple key-value pairs
             else:

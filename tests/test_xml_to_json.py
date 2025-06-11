@@ -13,8 +13,8 @@ import jsonpath_nz as jnz
 import json
 payload = jnz.xml_to_json("tests/test.xml", namespace=False)
 print(type(payload))
-dictPaylod = jnz.parse_dict(json.loads(payload), flatten=False)
-jnz.jprint(dictPaylod)
+dictPayload = jnz.flatten_dict(json.loads(payload), preserve_dict_values=False)
+jnz.jprint(dictPayload)
 
 
 
