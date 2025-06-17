@@ -19,7 +19,7 @@ from .log import log
 from .jprint import jprint
 from .xml_to_json import xml_to_json
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __author__ = "Yakub Mohammad | Rishaad"
 __license__ = "MIT"
 

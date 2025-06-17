@@ -180,22 +180,19 @@ def flatten_dict(data, parent_path="$", paths=None, extend=None, preserve_dict_v
             # Handle regular arrays
             elif isinstance(value, list):
                 for idx, item in enumerate(value):
+                    array_path = f"{current_path}[{idx}]"
                     if isinstance(item, dict):
                         if preserve_dict_values:
                             # Store the entire dictionary as a value at the array index
-                            array_path = f"{current_path}[{idx}]"
+                            # array_path = f"{current_path}[{idx}]"
                             paths[array_path] = item
                         else:
-                            for k, v in item.items():
-                                array_path = f"{current_path}[{idx}].{k}"
-                                if isinstance(v, dict) and preserve_dict_values:
-                                    paths[array_path] = v
-                                else:
-                                    if isinstance(v, dict):
-                                        flatten_dict(v, array_path, paths, extend, preserve_dict_values)
-                                    else:
-                                        paths[array_path] = v
-
+                            flatten_dict(item, array_path, paths, extend, preserve_dict_values)
+                    elif isinstance(item, list):
+                        # Handle nested lists
+                        flatten_dict(item, array_path, paths, extend, preserve_dict_values)
+                    else:
+                        paths[array_path] = item
             # Handle nested dictionaries
             elif isinstance(value, dict):
                 if preserve_dict_values:

@@ -1,0 +1,32 @@
+{
+    "order_id": "ABCXYZ",
+    "booking_ref_id": "XYZ123",
+    "order_items": [
+      {
+        "order_item_id": "ABZxyx_xyz123",
+        "services": [
+          {
+            "service_id": "P1_X1",
+            "class_of_service": "E",
+            "flight_seg_ref_id": "1",
+            "pax_ref_id": "ABC-2",
+            "status": "HK"
+          },
+          {
+            "service_id": "P2_X2",
+            "class_of_service": "E",
+            "flight_seg_ref_id": "2",
+            "pax_ref_id": "ADT-2",
+            "status": "HK"
+          },
+          {
+            "service_id": "P2_X3",
+            "class_of_service": "E",
+            "flight_seg_ref_id": "3",
+            "pax_ref_id": "ADT-2",
+            "status": "HK"
+          }
+        ]
+      }
+    ]
+}
