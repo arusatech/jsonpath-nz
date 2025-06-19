@@ -7,6 +7,12 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
     filter conditions for array elements, making it suitable for complex JSON data analysis
     and path generation.
     
+    Enhanced Features:
+    - Deep recursive processing of nested dictionaries within arrays
+    - Support for complex nested structures with multiple levels of arrays and objects
+    - Improved filter condition handling for nested objects
+    - Better handling of mixed data types in arrays
+    
     Args:
         data (dict): The dictionary to parse and convert to JSONPath expressions.
             Can contain nested dictionaries, lists, and scalar values.
@@ -33,6 +39,7 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
         - Array index paths: "$.items[0].price" for array elements (default behavior)
         - Filter paths: "$.users[?(@.id == '123' && @.active == 'true')].email" (with extend)
         - Root values: "$.status" for top-level scalar values
+        - Nested filter paths: "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.userType"
     
     Examples:
         Basic nested dictionary:
@@ -82,6 +89,39 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
             "$.users[?(@.id == '456' && @.role == 'admin')].email": "admin@example.com"
         }
         
+        Complex nested structure with filters:
+        
+        >>> data = {
+        ...     "reservation": {
+        ...         "pointOfSale": {
+        ...             "pnrEditor": [
+        ...                 {
+        ...                     "editorRole": "OWN",
+        ...                     "userId": {
+        ...                         "userType": "AIRLINE",
+        ...                         "iataNum": "45996322",
+        ...                         "officeId": "DALWN08AA"
+        ...                     },
+        ...                     "deliverySysInfo": {
+        ...                         "compId": "WN",
+        ...                         "locId": "DAL"
+        ...                     }
+        ...                 }
+        ...             ]
+        ...         }
+        ...     }
+        ... }
+        >>> extend_config = {"pnrEditor": ["editorRole"]}
+        >>> result = parse_dict(data, extend=extend_config)
+        >>> print(result)
+        {
+            "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.userType": "AIRLINE",
+            "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.iataNum": "45996322",
+            "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.officeId": "DALWN08AA",
+            "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].deliverySysInfo.compId": "WN",
+            "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].deliverySysInfo.locId": "DAL"
+        }
+        
         Complex nested structure:
         
         >>> data = {
@@ -114,16 +154,19 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
         - Target fields: Remaining fields that become the actual JSONPath targets
         - Filter format: Uses JSONPath filter syntax with @. prefix for current array item
         - Multiple conditions: Combined with && operator when multiple filter fields exist
+        - Nested processing: Recursively processes nested objects within filtered arrays
         
         Example extend configuration:
         >>> extend = {
         ...     "products": ["category", "status"],  # Filter on these fields
-        ...     "orders": ["customer_id"]           # Filter on customer_id
+        ...     "orders": ["customer_id"],          # Filter on customer_id
+        ...     "pnrEditor": ["editorRole"]         # Filter on editorRole
         ... }
         
         This creates paths like:
         - "$.products[?(@.category == 'electronics' && @.status == 'active')].price"
         - "$.orders[?(@.customer_id == '12345')].total"
+        - "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.userType"
     
     Note:
         - The function modifies the paths dictionary in-place during recursion
@@ -132,6 +175,8 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
         - Empty or None data values are preserved in the output
         - The function handles mixed data types (strings, numbers, booleans) as values
         - Arrays without matching extend configuration use standard index-based paths
+        - Nested dictionaries within arrays are recursively processed
+        - Complex nested structures are fully supported with proper path generation
     
     Raises:
         The function is designed to be robust and does not explicitly raise exceptions.
@@ -161,27 +206,40 @@ def parse_dict(data, parent_path="$", paths=None, extend=None):
 
                     # Build filter conditions
                     conditions = []
-                    target_field = None
-                    target_value = None
-
                     for k, v in item.items():
                         if k in filter_fields:
                             conditions.append(f"@.{k} == '{v}'")
-                        else:
-                            target_field = k
-                            target_value = v
 
-                    if conditions and target_field:
-                        filter_path = f"{current_path}[?({' && '.join(conditions)})].{target_field}"
-                        paths[filter_path] = target_value
+                    if conditions:
+                        filter_condition = f"[?({' && '.join(conditions)})]"
+                        filter_path = f"{current_path}{filter_condition}"
+                        
+                        # Recursively process the filtered item, excluding filter fields
+                        filtered_item = {k: v for k, v in item.items() if k not in filter_fields}
+                        if filtered_item:
+                            parse_dict(filtered_item, filter_path, paths, extend)
 
             # Handle regular arrays
             elif isinstance(value, list):
                 for idx, item in enumerate(value):
                     if isinstance(item, dict):
-                        for k, v in item.items():
-                            array_path = f"{current_path}[{idx}].{k}"
-                            paths[array_path] = v
+                        # Recursively process nested dictionaries in arrays
+                        array_path = f"{current_path}[{idx}]"
+                        parse_dict(item, array_path, paths, extend)
+                    elif isinstance(item, list):
+                        # Handle nested arrays
+                        for nested_idx, nested_item in enumerate(item):
+                            if isinstance(nested_item, dict):
+                                nested_array_path = f"{current_path}[{idx}][{nested_idx}]"
+                                parse_dict(nested_item, nested_array_path, paths, extend)
+                            else:
+                                # Handle scalar values in nested arrays
+                                nested_array_path = f"{current_path}[{idx}][{nested_idx}]"
+                                paths[nested_array_path] = nested_item
+                    else:
+                        # Handle scalar values in arrays
+                        array_path = f"{current_path}[{idx}]"
+                        paths[array_path] = item
 
             # Handle nested dictionaries
             elif isinstance(value, dict):

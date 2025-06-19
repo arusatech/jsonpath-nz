@@ -37,10 +37,43 @@ manifest = {
     
 }
 
+json_data_2 = {
+    "$.reservation.pointOfSale.pnrEditor[0].editorRole": "OWN",
+    "$.reservation.pointOfSale.pnrEditor[0].userId.userType": "AIRLINE",
+    "$.reservation.pointOfSale.pnrEditor[0].userId.iataNum": "45996322",
+    "$.reservation.pointOfSale.pnrEditor[0].userId.officeId": "DALWN08AA",
+    "$.reservation.pointOfSale.pnrEditor[0].deliverySysInfo.compId": "WN",
+    "$.reservation.pointOfSale.pnrEditor[0].deliverySysInfo.locId": "DAL",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].lang": "multi",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.Asia[0]": "mabdarin",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.Asia[1]": "hindi",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.Europe[0]": "english",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.Europe[1]": "poliski",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.America[0]": "English",
+    "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[0].region.America[1]": "Spinish"
+}
+jnz.jprint(jnz.parse_jsonpath(json_data_2))
+
+json_data_3 = {
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.userType": "AIRLINE",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.iataNum": "45996322",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.officeId": "DALWN08AA",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].deliverySysInfo.compId": "WN",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].deliverySysInfo.locId": "DAL",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.Asia[0]": "mabdarin",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.Asia[1]": "hindi",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.Europe[0]": "english",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.Europe[1]": "poliski",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.America[0]": "English",
+    "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.America[1]": "Spinish"
+}
+# jnz.jprint(jnz.parse_jsonpath(json_data_3))
+
+
 EXT_2 = {"gfe2010Fees": ["gfe2010FeeParentType", "gfe2010FeeType"], 'fields': ['fieldName']}
 payload = jnz.parse_jsonpath(manifest, extend=EXT_2)
-jnz.jprint(payload)
+# jnz.jprint(payload)
 
 payload = jnz.parse_jsonpath(jsonpath_data, extend=EXT_1)
-jnz.jprint(payload)
+# jnz.jprint(payload)
 
