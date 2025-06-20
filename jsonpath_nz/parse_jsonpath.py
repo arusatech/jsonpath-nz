@@ -630,6 +630,11 @@ def parse_jsonpath(manifest, extend=None):
                 dict_key, lsize = split_string_with_array(dict_key)
                 if isinstance(dict_value, dict):
                     tempDict[dict_key] = get_list(lsize, process_dict(dict_value))
+                else:
+                    key_to_delete = f'{dict_key}[{lsize}]'
+                    value_to_delete = tempDict[key_to_delete]
+                    tempDict.pop(key_to_delete)
+                    tempDict[dict_key] = get_list(lsize, value_to_delete)
             elif (open_bracket in dict_key) and (closed_bracket not in dict_key):
                 dict_key = re.findall(r"[0-9a-zA-Z=]+", dict_key)[0]
                 subList.append(process_subList(dict_value))
@@ -779,6 +784,8 @@ def parse_jsonpath(manifest, extend=None):
         for idx in range(cLen):
             if len(aList[idx]) == 0 and len(bList[idx]) != 0:
                 aList[idx] = bList[idx]
+            if len(aList[idx]) != 0 and len(bList[idx]) == 0:
+                bList[idx] = aList[idx]
             if isinstance(aList[idx], dict) and isinstance(bList[idx], dict):
                 merge_dicts(aList[idx], bList[idx])
             elif isinstance(aList[idx], list) and isinstance(bList[idx], list):
