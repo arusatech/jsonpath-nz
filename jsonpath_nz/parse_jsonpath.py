@@ -539,7 +539,7 @@ def parse_jsonpath(manifest, extend=None):
                     subList.append(process_subList(v))
                     tDict[k] = subList
 
-                strValues = re.findall(r"[0-9a-zA-Z=:._]+", k)
+                strValues = re.findall(r"[0-9a-zA-Z=:._()]+", k)
                 if len(strValues) == 2:
                     if "==" in strValues[0]:
                         tDict[strValues[0].replace("==", "")] = strValues[1]
@@ -547,15 +547,21 @@ def parse_jsonpath(manifest, extend=None):
                 if len(strValues) > 2:
                     if "==" in strValues[1]:
                         tDict[strValues[0]] = " ".join(strValues[2:])
-                        # Its exception example "Texas A(6)" : Anything that has ( or ) in assigned value
+                        # Check if any key in v ends with special characters
+                        special_chars = ['[', ']', '(', ')', '{', '}' ,'=']
+                        found_special_char = False
+                        if isinstance(v, dict):
+                            for key in v.keys():
+                                if any(key.endswith(char) for char in special_chars):
+                                    found_special_char = True
+                        if not found_special_char:
+                            tDict.update(process_dict(v))
+                       
                         ARValueList = tDict[strValues[0]].split(" ")
                         if ARValueList[0]:
-                            ARValue = (
-                                " ".join(ARValueList[:-1])
-                                + "("
-                                + ARValueList[-1]
-                                + ")"
-                            )
+                            if ARValueList[-1] == ')':
+                                ARValueList.pop()
+                            ARValue = " ".join(ARValueList[:-1]) + ARValueList[-1]
                             tDict[strValues[0]] = ARValue
 
                         tDict.update(process_subList(v))

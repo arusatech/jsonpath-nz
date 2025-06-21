@@ -62,7 +62,9 @@ jsonpath_data = {
     "$.store.local": "False",
     "$.channel": "online",
     "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210",
-    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211"
+    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211",
+    "$.1ab.2bc.3cd[?(@.4de == 'XYZ')].5ef.6fg[?(@.7gh == 'multi (1)')].8ij[?(@.9jk == 'ABC')].10kl.11lm[0]": "mandarin (1)",
+    "$.1ab.2bc.3cd[?(@.4de == 'XYZ')].5ef.6fg[?(@.7gh == 'multi (1)')].8ij[?(@.9jk == 'UVY')].10kl.11lm[1]": "hindi (2)"
 }
 
 extend = {
@@ -89,16 +91,43 @@ jprint(result)
   "loanApplication": {
     "borrower": [
       {
-        "firstName": "(John)",
-        "lastName": "(Doe)",
+        "firstName": "John",
+        "lastName": "Doe",
         "contact": "9876543210"
       },
       {
-        "firstName": "(John)",
-        "lastName": "(wright)",
+        "firstName": "John",
+        "lastName": "wright",
         "contact": "9876543211"
       }
     ]
+  },
+  "1ab": {
+    "2bc": {
+      "3cd": [
+        {
+          "4de": "XYZ",
+          "5ef": {
+            "6fg": [
+              {
+                "7gh": "multi(1)",
+                "8ij": [
+                  {
+                    "9jk": "UVY",
+                    "10kl": {
+                      "11lm": [
+                        "mandarin (1)",
+                        "hindi (2)"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
   }
 }
 ```

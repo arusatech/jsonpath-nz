@@ -59,7 +59,7 @@ json_data_2 = {
     "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[1].region.America[0]": "English",
     "$.reservation.pointOfSale.pnrEditor[0].userPrefs.country[1].region.America[1]": "Spinish"
 }
-jnz.jprint(jnz.parse_jsonpath(json_data_2))
+# jnz.jprint(jnz.parse_jsonpath(json_data_2))
 
 json_data_3 = {
     "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userId.userType": "AIRLINE",
@@ -74,7 +74,16 @@ json_data_3 = {
     "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.America[0]": "English",
     "$.reservation.pointOfSale.pnrEditor[?(@.editorRole == 'OWN')].userPrefs.country[?(@.lang == 'multi')].region.America[1]": "Spinish"
 }
-# jnz.jprint(jnz.parse_jsonpath(json_data_3))
+json_data_4 = {
+    "$.store.book[1].author": "Yakub Mohammad",
+    "$.store.local": "False",
+    "$.channel": "online",
+    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'Doe')].contact": "9876543210",
+    "$.loanApplication.borrower[?(@.firstName == 'John' && @.lastName == 'wright')].contact": "9876543211",
+    "$.1ab.2bc.3cd[?(@.4de == 'XYZ')].5ef.6fg[?(@.7gh == 'multi (1)')].8ij[?(@.9jk == 'ABC')].10kl.11lm[0]": "mandarin (1)",
+    "$.1ab.2bc.3cd[?(@.4de == 'XYZ')].5ef.6fg[?(@.7gh == 'multi (1)')].8ij[?(@.9jk == 'UVY')].10kl.11lm[1]": "hindi (2)"
+}
+jnz.jprint(jnz.parse_jsonpath(json_data_4, extend=EXT_1))
 
 
 EXT_2 = {"gfe2010Fees": ["gfe2010FeeParentType", "gfe2010FeeType"], 'fields': ['fieldName']}
